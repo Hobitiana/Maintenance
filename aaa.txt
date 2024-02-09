@@ -1,0 +1,106 @@
+controller
+public function enregistrer()
+	{
+	$maintenance= $this->input->post('maintenance');
+		var_dump($maintenance);
+		$table="Equipement";
+		$data['liste']=$this->modelTable->takeAlls($table); 
+		$nbrEquipement=count($data['liste']);
+		
+		
+		
+		$nbrParDecoupeTotal=0;
+		for($i=1;$i<$nbrEquipement+1;$i++)
+		{	
+				
+			if(empty($maintenance[$i])){ continue;}
+			//var_dump($maintenance[$i]);	
+				$table="sousensemble";
+				$nom="idEquipement";
+				$idEquipement=$i;
+				
+				$liste=$this->modelTable->takeWhereAll($table,$nom,$idEquipement);
+			
+					//var_dump($liste);
+					$nbrTotalSousENSEMBLE=count($liste);
+					var_dump("nbr sous ensemble total :".$nbrTotalSousENSEMBLE);
+				
+				$semaineArray=array();
+				
+			for($semaine=1;$semaine<53;$semaine++)
+				{
+					
+					if(empty($maintenance[$i][$semaine])){ continue;}
+					
+					var_dump("semaine : ".$maintenance[$i][$semaine]);	
+					//
+					$semaineArray[]=$maintenance[$i][$semaine];
+					$nbrDecoupe=count($semaineArray);
+					
+					
+					
+				}	
+				var_dump("nbr Decoupement :".$nbrDecoupe);
+				//var_dump("semaine :" .$semaineArray);
+				if($nbrTotalSousENSEMBLE==0){ var_dump("nbr Par decoupe est 0 ");	break;			}
+				else
+				{
+						$nbrParDecoupe=floor($nbrTotalSousENSEMBLE/$nbrDecoupe);
+						$nbrResteSousEnsemble=$nbrTotalSousENSEMBLE%$nbrDecoupe;
+						if($nbrResteSousEnsemble !==0){
+							
+							$nbrParDecoupe=$nbrParDecoupe+$nbrResteSousEnsemble;
+							var_dump($nbrParDecoupe);
+						}
+					
+				}	
+					var_dump("nbr Par decoupe ".$nbrParDecoupe);
+					$point_Deaprt=0;	
+			for($r=0;$r<$nbrDecoupe+1;$r++) {		
+						
+						
+							
+								$table="sousensemble";
+								$id="idEquipement";
+								$valeur=$idEquipement;
+								$listelimit=$this->modelTable->takeRechercheLimit($table,$id,$valeur,$point_Deaprt,$nbrParDecoupe);
+								
+								$point_Deaprt=$point_Deaprt+$nbrParDecoupe;
+								//$nbrParDecoupe+=$nbrParDecoupe;
+								var_dump($listelimit);
+							
+						
+		
+									
+											 foreach($listelimit as $sousEnsemble) {
+													$idSousEnsemble=$sousEnsemble['idSousEnsemble'];
+										
+													$data = array(
+														'idSousEnsemble' => $idSousEnsemble,
+														'semaine' => $semaineArray[0]
+
+													);
+												
+												
+													$table="semaine";
+													$this->modelCreate->create($table,$data);
+											
+										} 
+										
+							
+					}		
+					
+							
+				}			
+		
+	}	
+model
+
+public function takeRechercheLimit($table,$id,$valeur,$point_Deaprt,$nbrParDecoupe)
+	{ 
+		$sql = "select * from ".$table. " where ".$id."=".$valeur." LIMIT ".$point_Deaprt." , ".$nbrParDecoupe." ";
+		var_dump($sql);
+		$result = $this->db->query($sql);
+		return $result =$result->result_array();
+	}
+		

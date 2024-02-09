@@ -1,0 +1,67 @@
+je vais faire un site de maintenance:
+il y a une equipement:Ordie,Atcom,Cat,Atom02,Meteo,Suppo,....
+ensuite chaque equipement a son sousEnsemble:
+ex:Ordie a 80 sousEnsemble: 
+PC SUPERVISION MCU,
+PC AFTN USER CAT,
+PC AFTN USER BAT,
+PC AFTN USER CRT,
+PC AFTN USER CU TEL,
+PC AFTN USER VMA,...
+
+Meteo a 50 sousEnsemble:
+meteo1,
+meteo2,
+meteo3,
+meteo4,
+meteo5,
+meteo6,....
+
+ainsi de suite.
+et chaque semaine il y a une equipement et il y a une rotation c'est a dire
+semaine 1 :Ordie avec sousEnsemble 8 ,
+semaine 2:Meteo avec sousEnsemble 5,
+semaine 3:suppo avec sousEnsemble 7,
+....
+jusqu'a ce que l'un d'equipement n'a plus de sousEnsemble ,il fait une rotation.
+et on affiche chaque semaiine la resultat :equipement et ses sousEnsemble.
+
+
+
+
+
+
+
+
+
+
+
+misafidy/maka equipement
+maka sousEnsemble arakaraky ny decoupement
+dia tapitra iny,dia manampy semaine iray za dia miova equipement
+dia vao 0 ny sousEnsemble dia mivadika equipement
+
+$equiment=['Ordie','meteo','supp'];
+$decoupement=8;
+$getSousEnsemble=['','','',..]
+$equipement+1;
+$semaine+1;
+$decoupement=5;
+$getSousEnsemble=['','','',..]
+
+si($getSousEnsemble == 0)
+{
+  $equipement+1;
+}
+
+
+
+
+
+
+
+
+
+
+
+

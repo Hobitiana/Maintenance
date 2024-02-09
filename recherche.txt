@@ -1,0 +1,220 @@
+controller
+public function enregistrer()
+	{
+		$maintenance= $this->input->post('maintenance');
+		var_dump($maintenance);
+		
+				
+				$table="sousensemble";
+				$nom="idEquipement";
+			
+		//isany equipement =6
+		for($i=1;$i<6;$i++)
+		{
+			for($sem=1;$sem<53;$sem++)
+			{				
+				
+				
+					if(empty($maintenance[$i][$sem])) { continue; }
+					else 
+					{ 
+						$idEquipement=$i;
+						echo "equipement ".$idEquipement ." et semaines: " .$sem; 
+						$data['liste']=$this->modelTable->takeWhereAll($table,$nom,$idEquipement);
+								//var_dump($data['liste']);
+								$nbrTotalSousENSEMBLE=count($data['liste']);
+								var_dump( "total SousEnsemble: ".$nbrTotalSousENSEMBLE);
+								$nbrDecoupe=count($maintenance[$i]);
+								var_dump("total Frequence: ".$nbrDecoupe);
+								$nbrParDecoupe=$nbrTotalSousENSEMBLE/$nbrDecoupe;
+								if($nbrTotalSousENSEMBLE%$nbrDecoupe !==0){$nbrParDecoupe=(int)$nbrParDecoupe+1; var_dump("total ParDecoupe: ".$nbrParDecoupe);}
+								else{
+									var_dump("total ParDecoupe: ".$nbrParDecoupe);							
+								}
+								$point_Deaprt=0;
+								
+								while(true){
+									$table="sousensemble";
+									$id="idEquipement";
+									$valeur=$idEquipement;
+									$liste=$this->modelTable->takeRechercheLimit($table,$id,$valeur,$point_Deaprt,$nbrParDecoupe);
+									$point_Deaprt+=$nbrParDecoupe;
+									//var_dump($liste);
+									
+									var_dump($liste);
+									
+									if(count($liste)<$nbrParDecoupe)
+									{
+											break;
+									}
+									
+									
+												
+											
+											
+													$idSousEnsemble=$liste[$e]['idSousEnsemble'];
+													
+													$data = array(
+														'idSousEnsemble' => $idSousEnsemble,
+														'semaine' => $sem
+
+													);
+												
+												
+													$table="semaine";
+													$this->modelCreate->create($table,$data);
+												
+												
+											
+											
+										
+								}
+						
+					}
+					
+				
+			}				
+		}
+		
+	}
+model
+public function takeWhereAll($table,$column,$value) 
+	{
+		$sql = "select * from ".$table. " where ".$column."='".$value."'";
+		//var_dump($sql);
+		$result = $this->db->query($sql);
+		return $result =$result->result_array();
+	}
+	
+	public function takeRechercheLimit($table,$id,$valeur,$point_Deaprt,$nbrParDecoupe)
+	{ 
+		$sql = "select * from ".$table. " where ".$id."=".$valeur." LIMIT ".$point_Deaprt." , ".$nbrParDecoupe." ";
+		$result = $this->db->query($sql);
+		return $result =$result->result_array();
+	}
+
+vue
+<!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
+                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p>
+
+                    <!-- DataTales Example -->
+                   
+	<?php $mois=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre']; ?>
+	<div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Equipement</th>
+                                           <?php  for($i=0;$i<12;$i++)
+										   { ?>
+											<th><?php echo $mois[$i] ; ?></th>
+										 <?php  } ?>
+                                        </tr>
+										<tr>
+											 <th></th>
+											 <?php  for($i=1;$i<12;$i++)
+										   { 
+												   for($i=1;$i<53;$i++)
+												{ ?>
+											<th><?php echo $i ; ?></th>
+												<?php }
+												} ?>
+                                    </thead>
+                                  
+                                    <tbody>
+									<?php	for($a=0 ;$a<count($liste);$a++) 
+														{ ?>	
+                                        <tr>
+																					
+                                            <td><?php echo $liste[$a]['nom']; 	?></td>
+                                             <?php  for($i=1;$i<12;$i++)
+										   { 
+												   for($i=1;$i<52;$i++)
+												{ ?>
+											<td>
+													<input type="checkbox" name="">
+											</td>
+												<?php }
+												} ?>
+										
+                                        </tr>
+                                       <?php 	 }
+														?>	
+                                    </tbody>
+                                </table>
+								<input type="submit" value="Enregistrer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+				
+	<div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+							 <form action="<?php echo site_url('Traitement/enregistrer'); ?>" method="post">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Equipement</th>
+                                           <?php foreach($moisAvecSemaine as $moisAvecSemaine => $nbrSeamines)
+										   { ?>
+											<th colspan="<?php echo $nbrSeamines  ; ?>"><?php echo $moisAvecSemaine ; ?></th>
+										 <?php  } ?>
+                                        </tr>
+										<tr>
+											 <th></th>
+											 <?php  for($i=1;$i<12;$i++)
+										   { 
+												   for($i=1;$i<53;$i++)
+												{ ?>
+											<th><?php echo $i ; ?></th>
+												<?php }
+												} ?>
+                                    </thead>
+                                  
+                                    <tbody>
+									<?php	for($a=0 ;$a<count($liste);$a++) 
+														{ ?>	
+                                        <tr>
+																					
+                                            <td><?php echo $liste[$a]['nom']; 	?></td>
+                                             <?php  
+											 
+												   for($c=1;$c<53;$c++)
+												{ ?>
+												
+											<td>
+													<input type="checkbox" name="maintenance[<?php echo $liste[$a]['idEquipement']; ?>][<?php echo $c; ?>]" >
+											</td>
+												<?php 
+														
+													
+												} ?>
+										
+                                        </tr>
+                                       <?php 	 }
+														?>	
+                                    </tbody>
+                                </table>
+								<input type="submit" value="Enregistrer">
+								</form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
