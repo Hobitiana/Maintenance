@@ -1,6 +1,7 @@
 .DS_Store
 
-
+/application/config/config.php
+/application/config/database.php
 application/cache/*
 !application/cache/index.html
 !application/cache/.htaccess
@@ -15,6 +16,9 @@ user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
 /vendor/
 
+/composer.json
+/composer.lock
+/.env
 # IDE Files
 #-------------------------
 /nbproject/
